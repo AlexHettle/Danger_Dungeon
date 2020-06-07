@@ -6,6 +6,7 @@
 #include <utility>
 #include <string>
 #include <conio.h>
+//String shown at start of the game
 std::string custom_print=R"(
 
   _____          _   _  _____ ______ _____    _____  _    _ _   _  _____ ______ ____  _   _
@@ -16,6 +17,7 @@ std::string custom_print=R"(
  |_____/_/    \_\_| \_|\_____|______|_|  \_\ |_____/ \____/|_| \_|\_____|______\____/|_| \_|
 
 )"+std::string(20, '\n');
+//String shown if user wins
 std::string victory_text=R"(
 
  __     ______  _    _   ______  _____  _____          _____  ______ _____  _ _ _
@@ -25,6 +27,9 @@ std::string victory_text=R"(
     | | | |__| | |__| | | |____ ____) | |____ / ____ \| |    | |____| |__| |_|_|_|
     |_|  \____/ \____/  |______|_____/ \_____/_/    \_\_|    |______|_____/(_|_|_)
 )";
+//This function creates a map of objects that will be in the dungeon.
+//The key is the X and Y coordinates and the value is the type of object
+//creates 1 Character (the player), a key, an exit, and an event
 std::map<std::pair<int,int>,std::string> create_objects_in_room(){
     srand(time(0));
     std::map<std::pair<int,int>,std::string> locations_and_objects;
@@ -45,36 +50,31 @@ std::map<std::pair<int,int>,std::string> create_objects_in_room(){
     }
     return locations_and_objects;
 }
+//picks randomly what will occur if the user's character interacts with an event
+//and alters health by -1
 int event(int health){
     srand(time(0));
     int choice=rand()%7+1;
     if(choice==1){
         std::cout<<"You stepped in a spike trap! Ouch!\n";
-        health-=1;
     }else if(choice==2){
         std::cout<<"A spider jumps at you and bites you!\n";
-        health-=1;
     }else if(choice==3){
         std::cout<<"A find what looks like a key but is\nactually a small creature that bites you!\n";
-        health-=1;
     }else if(choice==4){
         std::cout<<"A goblin jumps out of nowhere, bites you, and runs away!\n";
-        health-=1;
     }else if(choice==5){
         std::cout<<"A rock strikes you on the head!\n";
-        health-=1;
     }else if(choice==6){
         std::cout<<"You accidentally step on a snake ad it bites you!\n";
-        health-=1;
     }else{
         std::cout<<"You stub your foot on a rock and fall!\n";
-        health-=1;
     }
-    return health;
+    return health-1;
 }
+//prints out the map of the dungeon showing all objects located in the map
 void print_map(std::map<std::pair<int,int>,std::string> all_object_locations){
     std::cout<<std::string(32,'X')<<"\n";
-
     for(int y=0;y<8;y++){
         std::cout<<'X';
         for(int x=0;x<30;x++){
@@ -97,6 +97,8 @@ void print_map(std::map<std::pair<int,int>,std::string> all_object_locations){
     }
     std::cout<<std::string(32,'X')<<"\n";
 }
+//takes in user input on where to go on the map. Also handles how the character interacts with 
+//objects it interacts with. Also prevents the user from moving outside of screen
 void run_game(std::map<std::pair<int,int>,std::string> &all_object_locations,bool has_key,int health){
     auto movement=[](auto &the_movement,auto &all_object_locations,bool &has_key,int &health,auto &no_movement){
         std::cout<<std::string(40,'\n');
@@ -160,11 +162,13 @@ void run_game(std::map<std::pair<int,int>,std::string> &all_object_locations,boo
         run_game(all_object_locations,has_key,health);
     }
 }
+//creates the start screen of the game
 void start_up_screen(){
     std::cout<<custom_print;
     std::cout<<"\nPress any key to start the game!";
     getch();
 }
+//sets up game to begin and calls start_up_screen and run_game
 int main(){
     std::cout<<std::string(40,'\n');
     int health=10;
